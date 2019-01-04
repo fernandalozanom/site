@@ -39,7 +39,11 @@ const CodeField = styled(Field).attrs({
 `
 
 class CarouselSubmissionForm extends Component {
-  state = { verifying: false, requestingSubmission: false }
+  state = {
+    verifying: false,
+    requestingSubmission: false,
+    doubleLink: false
+  }
 
   onClickSubmitButton = () => {
     const { workshopSlug, submissionData } = this.props
@@ -66,14 +70,18 @@ class CarouselSubmissionForm extends Component {
   }
 
   onChangeLiveURL = e => {
-    const liveUrl = e.target.value
+    let liveUrl = e.target.value
     const { submissionData } = this.props
+    const { doubleLink } = this.state
+
     this.props.setSubmissionData({ ...submissionData, liveUrl })
   }
 
   onChangeCodeURL = e => {
-    const codeUrl = e.target.value
+    let codeUrl = e.target.value
     const { submissionData } = this.props
+    const { doubleLink } = this.state
+
     this.props.setSubmissionData({ ...submissionData, codeUrl })
   }
 
@@ -82,15 +90,9 @@ class CarouselSubmissionForm extends Component {
   }
 
   render() {
-    const {
-      // workshopSlug,
-      submissionData,
-      authed,
-      authData,
-      onSignOut
-    } = this.props
+    const { submissionData, authed, authData, onSignOut } = this.props
 
-    const { verifying, requestingSubmission } = this.state
+    const { verifying, requestingSubmission, doubleLink } = this.state
 
     const { liveUrl, codeUrl } = submissionData
 
@@ -109,8 +111,10 @@ class CarouselSubmissionForm extends Component {
       <CarouselSubmissionFormOuter>
         {verifying ? null : (
           <Fragment>
-            <LiveField value={liveUrl} onChange={onChangeLiveURL} />
             <CodeField value={codeUrl} onChange={onChangeCodeURL} />
+            {doubleLink && (
+              <LiveField value={liveUrl} onChange={onChangeLiveURL} />
+            )}
           </Fragment>
         )}
         {authed || !verifying ? null : (
