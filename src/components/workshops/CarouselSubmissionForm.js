@@ -69,20 +69,55 @@ class CarouselSubmissionForm extends Component {
       .then(() => location.reload())
   }
 
-  onChangeLiveURL = e => {
-    let liveUrl = e.target.value
-    const { submissionData } = this.props
-    const { doubleLink } = this.state
+  liveToCodeRepl = url => {
+    // Return code url...
+  }
 
-    this.props.setSubmissionData({ ...submissionData, liveUrl })
+  codeToLiveRepl = url => {
+    // Return live url...
+  }
+
+  onInputReplLink = url => {
+    const isCodeUrl = url.includes('repl.it')
+    const { submissionData, setSubmissionData } = this.props
+
+    let liveUrl
+    let codeUrl
+
+    if (isCodeUrl) {
+      liveUrl = this.liveToCodeRepl(url)
+      codeUrl = url
+    } else {
+      liveUrl = url
+      codeUrl = this.codeToLiveRepl(url)
+    }
+
+    setSubmissionData({ ...submissionData, liveUrl, codeUrl })
+    this.setState({ doubleLink: false })
+  }
+
+  onChangeLiveURL = e => {
+    const liveUrl = e.target.value
+    const isReplLink = liveUrl.includes('repl.')
+    const { submissionData, setSubmissionData } = this.props
+
+    if (isReplLink) this.onInputReplLink(liveUrl)
+    else {
+      setSubmissionData({ ...submissionData, liveUrl })
+      this.setState({ doubleLink: true })
+    }
   }
 
   onChangeCodeURL = e => {
-    let codeUrl = e.target.value
-    const { submissionData } = this.props
-    const { doubleLink } = this.state
+    const codeUrl = e.target.value
+    const isReplLink = codeUrl.includes('repl.')
+    const { submissionData, setSubmissionData } = this.props
 
-    this.props.setSubmissionData({ ...submissionData, codeUrl })
+    if (isReplLink) this.onInputReplLink(codeUrl)
+    else {
+      setSubmissionData({ ...submissionData, codeUrl })
+      this.setState({ doubleLink: true })
+    }
   }
 
   onClickVeryifyButton = () => {
